@@ -9,7 +9,8 @@ class Deck:
             for rank in range(1, 13):
                 self.add_card(Card(rank, suit))
 
-        print (self.cards)
+        self.cards.append(Card(-1, 'Joker'))
+        self.cards.append(Card(-1, 'Joker'))
 
     def add_card(self, card):
         self.cards.append(card)
@@ -22,6 +23,9 @@ class Deck:
             return self.cards.pop()
         else:
             return None
+
+    def remove_joker(self):
+        self.cards = [card for card in self.cards if card.rank != -1]
 
     def __str__(self):
         return ', '.join(str(card) for card in self.cards)

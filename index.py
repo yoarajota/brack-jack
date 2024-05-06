@@ -1,7 +1,8 @@
-from classes.Deck import Deck
+from classes.BrackJack import BrackJack
+from classes.Player import Player
 
-a = Deck()
+import random
 
-a.shuffle()
+game = BrackJack([Player()])
 
-print(a)
+game.play()
