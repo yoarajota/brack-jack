@@ -7,15 +7,15 @@ class Dealer(Player):
         self.will_save_results = False
 
     def add_card_to_hand(self, card):
-        if len(self.hold_data_round.hand) == 1:
+        if len(self.hold_data_round["hand"]) == 1:
             card.is_hidden = True
 
-        self.hold_data_round.hand.append(card)
+        self.hold_data_round["hand"].append(card)
         
 
     def show_card(self):
-        self.hold_data_round.hand[1].is_hidden = False
-        return self.hold_data_round.hand[1]
+        self.hold_data_round["hand"][1].is_hidden = False
+        return self.hold_data_round["hand"][1]
 
     def setup_player(self):
         # Dealer does not need to be registered

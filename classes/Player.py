@@ -5,13 +5,18 @@ class Player:
     def __init__(self):
         self.hand = []
         self.readeds = []
-        self.is_done = False
         self.will_save_results = True
+        self.hold_data_round = {
+            "hand": [],
+            "decisions": [],
+            "is_done": False,
+            "result": None
+        }
         
         self.setup_player()
 
     def add_card_to_hand(self, card):
-        self.hold_data_round.hand.append(card)
+        self.hold_data_round["hand"].append(card)
 
     def read_card(self, card):
         if self.will_save_results:
@@ -21,7 +26,7 @@ class Player:
     def count_point(self):
         total = 0
         has_an_ace = False
-        for card in self.hold_data_round.hand:
+        for card in self.hold_data_round["hand"]:
             if (card.rank >= 10):
                 total += 10
             elif (card.rank == 1):
@@ -37,35 +42,27 @@ class Player:
 
         return total
 
-    def decide(self):
+    def random_decide(self):
         decision = random.randrange(2)
-
-        if decision == 0:
-            self.is_done = True
 
         decision = {
             "decision": decision,
             "current_points": self.current_points,
-            "hand_length": len(self.hold_data_round.hand),
+            "hand_length": len(self.hold_data_round["hand"]),
             "readeds_length": len(self.readeds)
         }
 
-        self.hold_data_round.decisions.append(decision)
+        self.hold_data_round["decisions"].append(decision)
 
     def setup_player(self):
         self.player_register = MongoDBClient.player.insert_one({})
-        print(self.player_register)
 
     def store_result(self, data):
         # Save the result of this round
-        result_obj = {
-            "result": data,
-            "round_hand_range": len(self.hold_data_round.hand),
-            "round_readeds_range": len(self.readeds)
-        }
+        self.hold_data_round["result"] = data
 
         if self.will_save_results:
-            MongoDBClient.player.update_one({"_id": self.player_register.inserted_id}, {"$push": {"results": result_obj}})
+            MongoDBClient.player.update_one({"_id": self.player_register.inserted_id}, {"$push": {"results": self.hold_data_round}})
 
     def set_num_of_decks(self, num_of_decks):
         if self.will_save_results:
@@ -73,11 +70,26 @@ class Player:
 
     def set_current_round(self, current_round):
         self.hold_data_round = {
-            hand: [],
-            decisions: []
+            "hand": [],
+            "decisions": [],
+            "is_done": False,
+            "result": None
         }
 
         self.current_round = current_round
 
         if self.will_save_results:
             MongoDBClient.player.update_one({"_id": self.player_register.inserted_id}, {"$set": {"current_round": current_round}})
+
+    def decide(self, decision):
+        decision = {
+            "decision": decision,
+            "current_points": self.current_points,
+            "hand_length": len(self.hold_data_round["hand"]),
+            "readeds_length": len(self.readeds)
+        }
+
+        self.hold_data_round["decisions"].append(decision)
+
+    def get_last_decision(self):
+        return self.hold_data_round["decisions"][-1].get("decision")

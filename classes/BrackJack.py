@@ -53,7 +53,7 @@ class BrackJack:
         count_stoped = 0
 
         for player in self.players:
-            if player.is_done or player in self.current_round_loosers:
+            if player.hold_data_round["is_done"] or player in self.current_round_loosers:
                 count_stoped += 1
 
         return count_stoped == len(self.players)
@@ -67,14 +67,14 @@ class BrackJack:
             self.lost(player)
 
         if player.current_points == 21:
-            player.is_done = True
+            player.decide(True)
         else: 
-            player.decide()
+            player.random_decide()
 
     def players_turn(self):
         while not self.all_players_stoped():
             for player in self.players:
-                if not player.is_done or player not in self.current_round_loosers:
+                if not player.hold_data_round["is_done"] or player not in self.current_round_loosers:
                     self.player_turn(player)
 
     def find_round_winners(self):
