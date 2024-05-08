@@ -75,6 +75,9 @@ class BrackJack:
             player.random_decide()
 
     def players_turn(self):
+        for player in self.players:
+            player.set_current_round(self.round)
+            
         while not self.all_players_stoped():
             for player in self.players:
                 if not player.get_last_decision() or player not in self.current_round_loosers:
@@ -105,14 +108,15 @@ class BrackJack:
             self.dealer.count_point()
 
     def can_play_round(self):
-        return len(self.cards) > 10
+        return len(self.cards) > 20
+    
+    def new_round(self):
+        self.round += 1
+        self.current_round_loosers = []
 
     def play(self):
         while self.can_play_round():
-            self.round += 1
-
-            for player in self.players:
-                player.set_current_round(self.round)
+            self.new_round()
 
             self.deal_card(self.dealer)
             self.dealer.add_card_to_hand(self.draw_card())
