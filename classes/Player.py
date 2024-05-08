@@ -9,7 +9,7 @@ class Player:
         self.hold_data_round = {
             "hand": [],
             "decisions": [],
-            "is_done": False,
+            "current_points": 0,
             "result": None
         }
         
@@ -21,6 +21,7 @@ class Player:
     def read_card(self, card):
         if self.will_save_results:
             MongoDBClient.player.update_one({"_id": self.player_register.inserted_id}, {"$push": {"readed": card.__dict__}})
+            
         self.readeds.append(card)
 
     def count_point(self):
@@ -38,7 +39,7 @@ class Player:
             if (total > 21 and has_an_ace):
                 total -= 10
 
-        self.current_points = total
+        self.hold_data_round["current_points"] = total
 
         return total
 
@@ -59,6 +60,10 @@ class Player:
 
     def store_result(self, data):
         # Save the result of this round
+        
+        # Transform hand atribute in a list of dictionaries
+        self.hold_data_round["hand"] = [card.__dict__ for card in self.hold_data_round["hand"]]
+
         self.hold_data_round["result"] = data
 
         if self.will_save_results:
@@ -72,7 +77,7 @@ class Player:
         self.hold_data_round = {
             "hand": [],
             "decisions": [],
-            "is_done": False,
+            "current_points": 0,
             "result": None
         }
 
@@ -83,7 +88,7 @@ class Player:
 
     def decide(self, decision):
         decision = {
-            "decision": decision,
+            "decision": bool(decision),
             "current_points": self.current_points,
             "hand_length": len(self.hold_data_round["hand"]),
             "readeds_length": len(self.readeds)
@@ -92,4 +97,11 @@ class Player:
         self.hold_data_round["decisions"].append(decision)
 
     def get_last_decision(self):
-        return self.hold_data_round["decisions"][-1].get("decision")
+        if self.hold_data_round["decisions"]:
+            return self.hold_data_round["decisions"][-1].get("decision")
+        else:
+            return False
+            
+    @property
+    def current_points(self):
+        return self.hold_data_round["current_points"]      
