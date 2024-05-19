@@ -41,6 +41,8 @@ class BrackJack:
             return None
 
     def all_players_read_card(self, card):
+        self.log(card.__str__() + ' was readed')
+
         for player in self.players:
             player.read_card(card)
 
@@ -59,6 +61,7 @@ class BrackJack:
         return count_stoped == len(self.players)
 
     def player_turn(self, player):
+        self.log(str(player.player_register.inserted_id) + ' turn')
         self.deal_card(player)
         if len(player.hold_data_round["hand"]) == 1:
             self.deal_card(player)
@@ -115,7 +118,11 @@ class BrackJack:
         self.current_round_loosers = []
 
     def play(self):
+        self.log("Starting game...")
+
         while self.can_play_round():
+            self.log("NEW ROUND")
+
             self.new_round()
 
             self.deal_card(self.dealer)
@@ -142,6 +149,8 @@ class BrackJack:
                     else:
                         self.lost(player)
 
+            self.log("END ROUND")
+
 
     def win(self, player):
         player.store_result('win')
@@ -150,3 +159,9 @@ class BrackJack:
     def lost(self, player):
         player.store_result('lost')
         print(f'{player.player_register.inserted_id} lost this round!')
+
+
+    def log(self, text):
+        with open('log.txt', 'a') as f:
+            f.write(text + '\n')
+            f.close()

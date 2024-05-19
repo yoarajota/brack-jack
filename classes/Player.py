@@ -17,6 +17,7 @@ class Player:
 
     def add_card_to_hand(self, card):
         self.hold_data_round["hand"].append(card)
+        self.log(str(self.player_register.inserted_id) + ' added a card to hand: ' + card.__str__())
 
     def read_card(self, card):
         if self.will_save_results:
@@ -55,13 +56,13 @@ class Player:
 
         self.hold_data_round["decisions"].append(decision)
 
+        str_decision = 'hit' if decision["decision"] else 'stand'
+        self.log(str(self.player_register.inserted_id) + ' decided to: ' + str_decision)
+
     def setup_player(self):
         self.player_register = MongoDBClient.player.insert_one({})
 
     def store_result(self, data):
-        # Save the result of this round
-        
-        # Transform hand atribute in a list of dictionaries
         self.hold_data_round["hand"] = [card.__dict__ for card in self.hold_data_round["hand"]]
 
         self.hold_data_round["result"] = data
@@ -96,6 +97,9 @@ class Player:
 
         self.hold_data_round["decisions"].append(decision)
 
+        str_decision = 'stand' if decision["decision"] else 'hit'
+        self.log(str(self.player_register.inserted_id) + ' decided to: ' + str_decision)
+
     def get_last_decision(self):
         if self.hold_data_round["decisions"]:
             return self.hold_data_round["decisions"][-1].get("decision")
@@ -104,4 +108,9 @@ class Player:
             
     @property
     def current_points(self):
-        return self.hold_data_round["current_points"]      
+        return self.hold_data_round["current_points"]
+    
+    def log(self, text):
+        with open('log.txt', 'a') as f:
+            f.write(text + '\n')
+            f.close()
