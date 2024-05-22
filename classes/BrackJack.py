@@ -71,8 +71,7 @@ class BrackJack:
         if player.current_points > 21:
             self.current_round_loosers.append(player)
             self.lost(player)
-
-        if player.current_points == 21:
+        elif player.current_points == 21:
             player.decide(True)
         else: 
             player.random_decide()
@@ -154,11 +153,11 @@ class BrackJack:
 
     def win(self, player):
         player.store_result('win')
-        print(f'{player.player_register.inserted_id} wins this round!')
+        self.log(f'{player.player_register.inserted_id} wins this round!')
 
     def lost(self, player):
         player.store_result('lost')
-        print(f'{player.player_register.inserted_id} lost this round!')
+        self.log(f'{player.player_register.inserted_id} lost this round!')
 
 
     def log(self, text):

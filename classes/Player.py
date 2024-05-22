@@ -42,6 +42,7 @@ class Player:
 
         self.hold_data_round["current_points"] = total
 
+        self.log(str(self.player_register.inserted_id) + ' has ' + str(total) + ' points')
         return total
 
     def random_decide(self):
