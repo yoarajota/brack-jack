@@ -115,6 +115,7 @@ class BrackJack:
     def new_round(self):
         self.round += 1
         self.current_round_loosers = []
+        self.dealer.set_current_round(self.round)
 
     def play(self):
         self.log("Starting game...")
@@ -131,22 +132,25 @@ class BrackJack:
 
             round_winners, max_players_points = self.find_round_winners()
 
-            self.dealer_turn(max_players_points)
+            if len(self.current_round_loosers) != len(self.players):
+                self.dealer_turn(max_players_points)
 
-            if self.dealer.current_points > 21:
-                for player in round_winners:
-                    self.win(player)
-
-            # TEMPORARY (WILL CHANGE WHEN ADDED NEW RULES)
-            elif self.dealer.current_points == 21:
-                for player in round_winners:
-                    self.lost(player)
-            else:
-                for player in round_winners:
-                    if player.current_points > self.dealer.current_points:
+                if self.dealer.current_points > 21:
+                    for player in round_winners:
                         self.win(player)
-                    else:
+
+                # TEMPORARY (WILL CHANGE WHEN ADDED NEW RULES)
+                elif self.dealer.current_points == 21:
+                    for player in round_winners:
                         self.lost(player)
+                else:
+                    for player in round_winners:
+                        if player.current_points > self.dealer.current_points:
+                            self.win(player)
+                        else:
+                            self.lost(player)
+            else:
+                self.log('All players lost, dealer does not need to play')
 
             self.log("END ROUND")
 
@@ -157,10 +161,10 @@ class BrackJack:
 
     def lost(self, player):
         player.store_result('lost')
+        self.current_round_loosers.append(player)
         self.log(f'{player.player_register.inserted_id} lost this round!')
-
 
     def log(self, text):
         with open('log.txt', 'a') as f:
-            f.write(text + '\n')
+            f.write(str(self.round) + " - " + text + '\n')
             f.close()

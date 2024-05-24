@@ -9,6 +9,7 @@ class Dealer(Player):
 
         self.will_save_results = False
         self.player_register = DealerPlayerRegister()
+        self.current_round = 0
 
     def add_card_to_hand(self, card):
         if len(self.hold_data_round["hand"]) == 1:
@@ -24,6 +25,9 @@ class Dealer(Player):
 
         self.log('Dealer show card: ' + self.hold_data_round["hand"][1].__str__())
         return self.hold_data_round["hand"][1]
+
+    def set_current_round(self, current_round):
+        self.current_round = current_round
 
     def setup_player(self):
         # Dealer does not need to be registered

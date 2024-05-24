@@ -113,5 +113,5 @@ class Player:
     
     def log(self, text):
         with open('log.txt', 'a') as f:
-            f.write(text + '\n')
+            f.write(str(self.current_round) + " - " + text + '\n')
             f.close()
