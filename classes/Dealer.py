@@ -26,9 +26,6 @@ class Dealer(Player):
         self.log('Dealer show card: ' + self.hold_data_round["hand"][1].__str__())
         return self.hold_data_round["hand"][1]
 
-    def set_current_round(self, current_round):
-        self.current_round = current_round
-
     def setup_player(self):
         # Dealer does not need to be registered
         pass
