@@ -1,6 +1,7 @@
 
 from classes.Deck import Deck
 from classes.Dealer import Dealer
+import random
 
 class BrackJack:
     def __init__(self, player_list, number_of_decks = 6):
@@ -26,6 +27,8 @@ class BrackJack:
             deck.remove_joker()
             deck.shuffle()
             all_cards += deck.cards
+
+        random.shuffle(all_cards)
 
         half = len(all_cards) // 2
 
@@ -147,6 +150,8 @@ class BrackJack:
                     for player in round_winners:
                         if player.current_points > self.dealer.current_points:
                             self.win(player)
+                        elif player.current_points == self.dealer.current_points:
+                            self.draw(player)
                         else:
                             self.lost(player)
             else:
@@ -163,6 +168,10 @@ class BrackJack:
         player.store_result('lost')
         self.current_round_loosers.append(player)
         self.log(f'{player.player_register.inserted_id} lost this round!')
+
+    def draw(self, player):
+        player.store_result('draw')
+        self.log(f'{player.player_register.inserted_id} draw this round!')
 
     def log(self, text):
         with open('log.txt', 'a') as f:
