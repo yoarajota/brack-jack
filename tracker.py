@@ -38,11 +38,15 @@ while(True):
 
         break
     elif userInput.startswith('g'):
-        if hasattr(mapped, userInput[1:]):
-            card = mapped[userInput[1:]]
+        val = userInput[1:]
+
+        if val in mapped:
+            card = mapped[val]
+
+            print(card)
 
             memory_hold_hand.append(card)
-            del mapped[userInput[1:]]
+            del mapped[val]
 
     elif userInput.startswith('hit'):
         total = 0
@@ -74,10 +78,15 @@ while(True):
                 safe_cards += 1
         
         total_remaining = bust_cards + safe_cards
+
         if total_remaining > 0:
             bust_probability = (bust_cards / total_remaining) * 100
+
             print(f"Probability of exceeding 21: {bust_probability:.2f}%")
             print(f"Cards that would bust: {bust_cards}/{total_remaining}")
+
+        # DEALER DRAW LOGIC
+
         else:
             print("No cards remaining in the deck!")
 
